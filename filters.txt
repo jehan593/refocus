@@ -26,8 +26,6 @@ music.youtube.com##.ytmusic-shelf.style-scope.ytmusic-carousel-shelf-renderer
 music.youtube.com##ytmusic-shelf-renderer.style-scope.ytmusic-section-list-renderer.fullbleed
 
 ! --- Reddit ---
-! Home Page
-www.reddit.com###main-content > .nd\:visible
 ! Top Left Navigation Section
 www.reddit.com##left-nav-top-section
 
