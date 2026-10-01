@@ -5,6 +5,10 @@ x.com##div.r-16y2uox.r-cpa5s6.r-14tvyh0.css-g5y9jx:nth-of-type(1)
 x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(4)
 ! What's Happening Card
 x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(5)
+! Subscribe to Premium card
+x.com##.r-bnwqim.r-u9wvl5.r-w7s2jr.r-uaa2di.r-eqz5dr.r-1habvwh.css-g5y9jx
+! Who to Follow card
+x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(6)
 
 ! --- YouTube ---
 ! Side Bar Shorts Button
@@ -28,6 +32,14 @@ music.youtube.com##ytmusic-shelf-renderer.style-scope.ytmusic-section-list-rende
 ! --- Reddit ---
 ! Top Left Navigation Section
 www.reddit.com##left-nav-top-section
+! For You tab
+www.reddit.com###feed-tab-1
+! Games on Reddit Card
+www.reddit.com##.nd\:visible > faceplate-expandable-section-helper > .rounded-none.border-none.bg-transparent.m-0.p-0
+! Following Feed's Recommended Communities card
+www.reddit.com##.my-2xs.py-2xs.px-md.flex-col.flex.nd\:visible
+! Following Feed's Go to For You page card
+www.reddit.com##.text-center.py-md.px-md.bg-neutral-background.items-center.flex-col.flex
 
 ! --- Facebook ---
 ! Home Page
