@@ -3,6 +3,7 @@ const DISPLAY_NAMES = {
   "twitter.com": "X",
   "youtube.com": "YouTube",
   "music.youtube.com": "YouTube Music",
+  "open.spotify.com": "Spotify",
   "reddit.com": "Reddit",
   "facebook.com": "Facebook",
   "web.whatsapp.com": "WhatsApp"
