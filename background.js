@@ -6,7 +6,8 @@ const DISPLAY_NAMES = {
   "open.spotify.com": "Spotify",
   "reddit.com": "Reddit",
   "facebook.com": "Facebook",
-  "web.whatsapp.com": "WhatsApp"
+  "web.whatsapp.com": "WhatsApp",
+  "tiktok.com": "TikTok"
 };
 
 function canonical(host) {
@@ -43,7 +44,12 @@ function parseSites(text) {
         selectors: []
       });
     }
-    site.filters[site.filters.length - 1].selectors.push(selector);
+    if (selector.startsWith("@behavior:")) {
+      site.filters[site.filters.length - 1].behavior =
+        selector.slice("@behavior:".length).trim();
+    } else {
+      site.filters[site.filters.length - 1].selectors.push(selector);
+    }
     name = null;
   }
   return [...byKey.values()];

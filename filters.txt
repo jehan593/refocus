@@ -28,6 +28,8 @@ youtube.com##ytd-browse[page-subtype*='home']
 music.youtube.com##.ytmusic-shelf.style-scope.ytmusic-carousel-shelf-renderer
 ! Suggestion in Play Lists
 music.youtube.com##ytmusic-shelf-renderer.style-scope.ytmusic-section-list-renderer.fullbleed
+! Hide videos
+music.youtube.com##@behavior:hide-videos
 
 ! --- Spotify ---
 ! Home Page Suggestions
@@ -59,3 +61,22 @@ web.whatsapp.com##div.xn95wi4.xw36f2b.xh8yej3.x12fk4p8.x1oa3qoh.xozqiw3.x2lwn1j.
 ! Channel Suggestions
 web.whatsapp.com##.xryxfnj.x1plvlek.xh8yej3.x1n2onr6
 web.whatsapp.com##.x2vl965.xe2zdcy.x1a8lsjc.x1h678fw > .xvtqlqk.xdx6fka.x1vqgdyp.x15urzxu.x129tdwq.x1xc408v.xt8t1vi.x9f619.xk8lq53.x1lliihq.xh8yej3.xum2xem.x11xpdln.x13t8fmb.x3oybdh.xrdum7p.xmw7ebm.x9v5kkp.xtnn1bt.x1wjp2x.xo1mcw5.x12llq9.xkveyfu.x2uibgs.xnj1f2r.x1t7ytsu.x1q0q8m5.x18b5jzi.x13fuv20.xpilrb4.xso031l.x1lun4ml.x178xt8z.xjbqb8w.x1x3ic1u.x1f1wgk5.xgmdoj8.x1l5mzlr.x1mfml39.x1xl5mkn.xikp0eg.x1akc3lz.x5rv0tg.xr6f91l.xapdjt.x2q1x1w.x1r0yslu.x1wsn0xg.x4eaejv.x1j6awrg.x1s928wv.x1ypdohk.x1ja2u2z.x1syfmzz.x1so62im.x1n2onr6.x18d9i69.xexx8yu.x1lziwak.xat24cr.x14z9mp.xdj266r.html-button
+
+! --- TikTok ---
+! Hide "For You"
+tiktok.com##[data-e2e="nav-foryou"]
+tiktok.com##a[href="/foryou"]
+tiktok.com##[class*="DivSideNavContainer"] a[href="/"]:not([data-e2e="tiktok-logo"]):not([class*="LinkLogo"])
+! Open my profile
+tiktok.com##@behavior:redirect-profile
+! Hide "Explore"
+tiktok.com##[data-e2e="nav-explore"]
+tiktok.com##a[href="/explore"]
+tiktok.com##a[href^="/explore?"]
+tiktok.com##[id^="main-content-explore"]
+tiktok.com##@behavior:redirect-explore
+! Hide "Friends"
+tiktok.com##[data-e2e="nav-friends"]
+tiktok.com##a[href="/friends"]
+tiktok.com##a[href^="/friends?"]
+tiktok.com##[id^="main-content-friends"]
