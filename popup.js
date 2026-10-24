@@ -34,6 +34,13 @@ function render(sites, toggles) {
     row.className = "site-row";
     row.classList.toggle("disabled", toggles[site.key] === false);
 
+    const childStates = filters.map((f) => toggles[f.id] !== false);
+    const enabledCount = childStates.filter(Boolean).length;
+    if (filters.length > 0) {
+      if (enabledCount === 0) row.classList.add("all-off");
+      else if (enabledCount < filters.length) row.classList.add("partial");
+    }
+
     const label = document.createElement("button");
     label.type = "button";
     label.className = "site-label";
@@ -101,8 +108,43 @@ list.addEventListener("change", async (e) => {
   const { toggles = {} } = await chrome.storage.local.get("toggles");
   toggles[key] = input.checked;
   await chrome.storage.local.set({ toggles });
+  refreshSiteRowClasses(toggles);
 });
+
+function refreshSiteRowClasses(toggles) {
+  for (const row of list.querySelectorAll(".site-row")) {
+    const states = [...row.querySelectorAll(".sub-row input")]
+      .map((i) => i.checked ? 1 : 0);
+    const enabledCount = states.reduce((a, b) => a + b, 0);
+    row.classList.toggle("all-off", states.length > 0 && enabledCount === 0);
+    row.classList.toggle("partial", states.length > 0 && enabledCount < states.length);
+  }
+}
 
 chrome.storage.local.get(["sites", "toggles"], ({ sites = [], toggles = {} }) => {
   render(sites, toggles);
+});
+
+const mainView = document.getElementById("site-list");
+const mainTopbar = document.getElementById("main-topbar");
+const settingsView = document.getElementById("settings-view");
+const enableOnStartup = document.getElementById("enable-on-startup");
+
+document.getElementById("open-settings").addEventListener("click", () => {
+  mainView.hidden = true;
+  mainTopbar.hidden = true;
+  settingsView.hidden = false;
+  chrome.storage.local.get("enableOnStartup", ({ enableOnStartup: v }) => {
+    enableOnStartup.checked = v !== false;
+  });
+});
+
+enableOnStartup.addEventListener("change", () => {
+  chrome.storage.local.set({ enableOnStartup: enableOnStartup.checked });
+});
+
+document.getElementById("back-btn").addEventListener("click", () => {
+  settingsView.hidden = true;
+  mainView.hidden = false;
+  mainTopbar.hidden = false;
 });

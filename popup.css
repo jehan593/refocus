@@ -5,6 +5,8 @@
   --nord3: #4c566a;
   --nord4: #d8dee9;
   --nord9: #81a1c1;
+  --nord13: #ebcb8b;
+  --nord15: #b48ead;
   --text: var(--nord4);
   --muted: #98a2b3;
 
@@ -49,6 +51,70 @@ body {
   margin: 2px 0 0;
   color: var(--muted);
   font-size: 11px;
+}
+
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.settings-btn {
+  padding: 4px 8px;
+  background: var(--nord2);
+  color: var(--text);
+  border: 1px solid var(--nord3);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.settings-btn:hover {
+  background: var(--nord3);
+}
+
+.settings-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.settings-view[hidden] {
+  display: none;
+}
+
+.settings-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--nord1);
+  border-radius: 12px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+}
+
+.setting-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-name {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.setting-desc {
+  color: var(--muted);
+  font-size: 10px;
+  margin-top: 2px;
 }
 
 .site-list {
@@ -178,6 +244,18 @@ body {
 .switch input:focus-visible + .switch-track {
   outline: 2px solid var(--nord9);
   outline-offset: 1px;
+}
+
+.site-row.partial .switch input[data-site]:checked + .switch-track {
+  background: var(--nord15);
+}
+
+.site-row.all-off .switch input[data-site]:checked + .switch-track {
+  background: var(--nord13);
+}
+
+.site-row.all-off .switch input[data-site]:checked + .switch-track:hover {
+  background: var(--nord13);
 }
 
 .sub-list {

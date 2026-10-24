@@ -6,11 +6,34 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1>Refocus</h1>
+  <header class="topbar" id="main-topbar">
+    <div class="topbar-row">
+      <h1>Refocus</h1>
+      <button id="open-settings" class="settings-btn" title="Settings" aria-label="Settings">⚙</button>
+    </div>
     <p class="subtitle">Hide clutter, site by site.</p>
   </header>
   <ul id="site-list" class="site-list" aria-label="Sites"></ul>
+  <section id="settings-view" class="settings-view" hidden>
+    <header class="topbar">
+      <div class="topbar-row">
+        <button id="back-btn" class="settings-btn" title="Back" aria-label="Back">←</button>
+        <h1>Settings</h1>
+      </div>
+    </header>
+    <ul class="settings-list">
+      <li class="setting-row">
+        <div class="setting-text">
+          <div class="setting-name">Enable all filters on startup</div>
+          <div class="setting-desc">Turn every site and filter back on each time the browser starts.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="enable-on-startup" aria-label="Enable all filters on startup">
+          <span class="switch-track"><span class="switch-knob"></span></span>
+        </label>
+      </li>
+    </ul>
+  </section>
   <script src="popup.js"></script>
 </body>
 </html>

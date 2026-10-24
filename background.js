@@ -55,11 +55,12 @@ function parseSites(text) {
   return [...byKey.values()];
 }
 
-async function loadSites() {
+async function fetchFilters() {
   const res = await fetch(chrome.runtime.getURL("filters.txt"));
-  const text = await res.text();
+  return res.text();
+}
 
-  const sites = parseSites(text);
+async function applySites(sites) {
   const stored = await chrome.storage.local.get(["sites", "toggles"]);
   const toggles = { ...(stored.toggles || {}) };
   for (const site of sites) {
@@ -71,6 +72,44 @@ async function loadSites() {
   await chrome.storage.local.set({ sites, toggles });
 }
 
-chrome.runtime.onInstalled.addListener(loadSites);
-chrome.runtime.onStartup.addListener(loadSites);
-loadSites();
+async function loadSites() {
+  const text = await fetchFilters();
+  await applySites(parseSites(text));
+}
+
+async function applyStartupPolicy() {
+  const { enableOnStartup = true } = await chrome.storage.local.get("enableOnStartup");
+  if (!enableOnStartup) return;
+  const { sites = [] } = await chrome.storage.local.get("sites");
+  const { toggles = {} } = await chrome.storage.local.get("toggles");
+  let changed = false;
+  for (const site of sites) {
+    if (toggles[site.key] === false) { toggles[site.key] = true; changed = true; }
+    for (const f of site.filters) {
+      if (toggles[f.id] === false) { toggles[f.id] = true; changed = true; }
+    }
+  }
+  if (changed) await chrome.storage.local.set({ toggles });
+}
+
+const SESSION_BOOT_KEY = "refocus_boot_done";
+
+async function boot() {
+  if (chrome.storage.session) {
+    const { [SESSION_BOOT_KEY]: booted } = await chrome.storage.session.get(SESSION_BOOT_KEY);
+    if (!booted) {
+      await chrome.storage.session.set({ [SESSION_BOOT_KEY]: true });
+      await applyStartupPolicy();
+    }
+  }
+  await loadSites();
+}
+
+chrome.runtime.onInstalled.addListener(async () => {
+  await loadSites();
+  await applyStartupPolicy();
+});
+chrome.runtime.onStartup.addListener(() => {
+  chrome.storage.session.remove(SESSION_BOOT_KEY);
+});
+boot().catch(console.error);
