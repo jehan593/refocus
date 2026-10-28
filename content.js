@@ -128,16 +128,19 @@ const REDIRECT_GUARD_KEY = "refocus_redirect_guard_v1";
 const HOME_FEED_CLASS = "refocus-home-feed";
 const TT_HOME_PATHS = ["/", "/foryou"];
 
+// Limit actual navigations to 3 per 30s. The window is anchored to its start
+// (ts is only written when a redirect is allowed), so blocked attempts never
+// postpone the reset.
 function canRedirect() {
   try {
     const now = Date.now();
     const raw = sessionStorage.getItem(REDIRECT_GUARD_KEY);
-    let state = raw ? JSON.parse(raw) : { count: 0, ts: now };
-    if (now - state.ts > 30000) state = { count: 0, ts: now };
+    let state = raw ? JSON.parse(raw) : null;
+    if (!state || now - state.ts > 30000) state = { count: 0, ts: now };
     state.count += 1;
-    state.ts = now;
+    if (state.count > 3) return false;
     sessionStorage.setItem(REDIRECT_GUARD_KEY, JSON.stringify(state));
-    return state.count <= 3;
+    return true;
   } catch {
     return true;
   }
@@ -155,27 +158,43 @@ function getProfileHref() {
   return href && href.startsWith("/@") && href.length > 2 ? href : null;
 }
 
-function redirectToProfile() {
-  const href = getProfileHref();
-  if (href) {
-    window.location.replace(href);
+const PROFILE_POLL_INTERVAL = 500;
+const PROFILE_POLL_TIMEOUT = 30000;
+let profilePollTimer = 0;
+let profilePollDeadline = 0;
+
+function stopProfilePoll() {
+  if (profilePollTimer) {
+    window.clearInterval(profilePollTimer);
+    profilePollTimer = 0;
+  }
+}
+
+function tryProfileRedirect() {
+  // Keep polling across SPA hops between "/" and "/foryou"; only give up when
+  // the user actually leaves the home paths.
+  if (!TT_HOME_PATHS.includes(window.location.pathname)) {
+    stopProfilePoll();
     return;
   }
-  let attempts = 0;
-  const intervalId = window.setInterval(() => {
-    if (window.location.pathname !== "/") {
-      window.clearInterval(intervalId);
-      return;
-    }
-    attempts++;
-    const found = getProfileHref();
-    if (found) {
-      window.clearInterval(intervalId);
-      window.location.replace(found);
-      return;
-    }
-    if (attempts >= 40) window.clearInterval(intervalId);
-  }, 500);
+  if (Date.now() > profilePollDeadline) {
+    stopProfilePoll();
+    return;
+  }
+  const href = getProfileHref();
+  if (!href) return;
+  stopProfilePoll();
+  if (canRedirect()) window.location.replace(href);
+}
+
+function redirectToProfile() {
+  if (profilePollTimer) return;
+  profilePollDeadline = Date.now() + PROFILE_POLL_TIMEOUT;
+  tryProfileRedirect();
+  profilePollTimer = window.setInterval(
+    tryProfileRedirect,
+    PROFILE_POLL_INTERVAL
+  );
 }
 
 let routeTimer = 0;
@@ -189,17 +208,18 @@ function checkTikTokRedirect() {
     isHome && behaviorState.has("redirect-profile")
   );
   if (!isHome && !isExplore) {
+    stopProfilePoll();
     clearRedirectGuard();
     return;
   }
-  if (isHome && behaviorState.has("redirect-profile")) {
-    if (!canRedirect()) return;
+  if (isHome) {
+    if (!behaviorState.has("redirect-profile")) return;
     redirectToProfile();
     return;
   }
-  if (isExplore && behaviorState.has("redirect-explore")) {
-    if (!canRedirect()) return;
-    window.location.replace("/following");
+  if (behaviorState.has("redirect-explore")) {
+    stopProfilePoll();
+    if (canRedirect()) window.location.replace("/following");
   }
 }
 
@@ -222,6 +242,7 @@ function syncTikTokRedirectWatch() {
       window.removeEventListener("popstate", checkTikTokRedirect);
       window.removeEventListener("hashchange", checkTikTokRedirect);
     }
+    stopProfilePoll();
     document.documentElement.classList.remove(HOME_FEED_CLASS);
   }
 }
