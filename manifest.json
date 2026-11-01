@@ -37,12 +37,24 @@
       ],
       "js": ["content.js"],
       "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "*://music.youtube.com/*",
+        "*://*.music.youtube.com/*"
+      ],
+      "js": ["page/ytmusic-video-handler.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
     }
   ],
   "web_accessible_resources": [
     {
-      "resources": ["page/ytmusic-video-handler.js", "icons/icon128.png"],
-      "matches": ["*://*.music.youtube.com/*"]
+      "resources": ["icons/icon128.png"],
+      "matches": [
+        "*://music.youtube.com/*",
+        "*://*.music.youtube.com/*"
+      ]
     }
   ],
   "icons": {
