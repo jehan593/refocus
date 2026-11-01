@@ -2,7 +2,9 @@
   if (window.__refocusHideVideos) return;
   window.__refocusHideVideos = true;
 
-  let enabled = true;
+  // Stays inactive until a postMessage from the content script enables it,
+  // so the stream patching only runs when "Hide videos" is toggled on.
+  let enabled = false;
 
   window.addEventListener("message", (event) => {
     if (event.source !== window) return;

@@ -287,7 +287,17 @@ ytmusic-player::after {
   pointer-events: none;
 }`;
 
-let ytmusicHandlerInjected = false;
+// Replaces every artwork <img> in place with the extension icon. Using
+// `content: url()` on replaced elements keeps each image's original box size
+// and position, so layout stays intact — only the pixels change.
+const YT_MUSIC_IMAGE_CSS = `img.yt-img-shadow,
+ytmusic-player-bar img,
+ytmusic-thumbnail-renderer img,
+ytmusic-detail-header-renderer img,
+ytmusic-fullbleed-thumbnail-renderer img,
+#song-image img {
+  content: url("${chrome.runtime.getURL("icons/icon128.png")}") !important;
+}`;
 
 function postHideVideosState(enabled) {
   window.postMessage({ source: "refocus", type: "hide-videos", enabled }, "*");
@@ -315,18 +325,19 @@ const BEHAVIORS = {
   "hide-videos": {
     apply() {
       setBehaviorStyle("hide-videos", YT_MUSIC_VIDEO_CSS);
-      if (!ytmusicHandlerInjected) {
-        ytmusicHandlerInjected = true;
-        const script = document.createElement("script");
-        script.src = chrome.runtime.getURL("page/ytmusic-video-handler.js");
-        script.onload = () => script.remove();
-        (document.head || document.documentElement).appendChild(script);
-      }
       postHideVideosState(true);
     },
     revert() {
       setBehaviorStyle("hide-videos", null);
       postHideVideosState(false);
+    }
+  },
+  "hide-images": {
+    apply() {
+      setBehaviorStyle("hide-images", YT_MUSIC_IMAGE_CSS);
+    },
+    revert() {
+      setBehaviorStyle("hide-images", null);
     }
   }
 };

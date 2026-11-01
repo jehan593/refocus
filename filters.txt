@@ -28,6 +28,8 @@ youtube.com##ytd-browse[page-subtype*='home']
 music.youtube.com##.ytmusic-shelf.style-scope.ytmusic-carousel-shelf-renderer
 ! Suggestion in Play Lists
 music.youtube.com##ytmusic-shelf-renderer.style-scope.ytmusic-section-list-renderer.fullbleed
+! Hide Images
+music.youtube.com##@behavior:hide-images
 ! Hide videos
 music.youtube.com##@behavior:hide-videos
 
