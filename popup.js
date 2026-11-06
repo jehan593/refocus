@@ -68,6 +68,8 @@ function render(sites, toggles) {
 
     const subList = document.createElement("ul");
     subList.className = "sub-list";
+    const subWrap = document.createElement("div");
+    subWrap.className = "sub-wrap";
     for (const f of filters) {
       const sub = document.createElement("li");
       sub.className = "sub-row";
@@ -80,11 +82,25 @@ function render(sites, toggles) {
         `${f.name} on ${site.name}`
       );
       sub.append(subName, subSw);
-      subList.append(sub);
+      subWrap.append(sub);
     }
+    subList.append(subWrap);
 
     row.append(label, sw, subList);
     list.append(row);
+  }
+}
+
+// Scroll an expanded row fully into view after its expansion animation has
+// had time to grow the sub-list (measuring at click time sees collapsed size).
+// Groups taller than the viewport align their header to the top instead, so
+// the toggles stay reachable; shorter groups bottom-align via "nearest".
+function revealExpandedRow(row) {
+  const rect = row.getBoundingClientRect();
+  if (rect.height > list.clientHeight && rect.top < list.getBoundingClientRect().top) {
+    list.scrollTop += rect.top - list.getBoundingClientRect().top - 6;
+  } else {
+    row.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 }
 
@@ -102,7 +118,10 @@ list.addEventListener("click", (e) => {
   const expanded = !wasOpen;
   if (expanded) {
     row.classList.add("open");
+    // Keep the row itself visible while it expands...
     row.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    // ...then re-align once the expansion animation has finished growing it.
+    window.setTimeout(() => revealExpandedRow(row), 240);
   }
   btn.setAttribute("aria-expanded", String(expanded));
 });
@@ -140,10 +159,18 @@ const mainTopbar = document.getElementById("main-topbar");
 const settingsView = document.getElementById("settings-view");
 const enableOnStartup = document.getElementById("enable-on-startup");
 
+function animateEnter(el, cls) {
+  el.classList.remove(cls);
+  // Force a reflow so re-adding the class restarts the animation.
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+
 document.getElementById("open-settings").addEventListener("click", () => {
   mainView.hidden = true;
   mainTopbar.hidden = true;
   settingsView.hidden = false;
+  animateEnter(settingsView, "enter-right");
   chrome.storage.local.get("enableOnStartup", ({ enableOnStartup: v }) => {
     enableOnStartup.checked = v !== false;
   });
@@ -157,4 +184,6 @@ document.getElementById("back-btn").addEventListener("click", () => {
   settingsView.hidden = true;
   mainView.hidden = false;
   mainTopbar.hidden = false;
+  animateEnter(mainTopbar, "enter-left");
+  animateEnter(mainView, "enter-left");
 });
