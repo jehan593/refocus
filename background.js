@@ -15,6 +15,13 @@ function canonical(host) {
   return h.startsWith("www.") ? h.slice(4) : h;
 }
 
+function slugify(text) {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 function parseSites(text) {
   const byKey = new Map();
   let name = null;
@@ -38,8 +45,14 @@ function parseSites(text) {
     }
     const site = byKey.get(key);
     if (name || site.filters.length === 0) {
+      // Derive the id from the label so filter ids stay stable when labels
+      // are renamed or new filters are inserted above others.
+      let slug = slugify(name || "filter");
+      for (let n = 2; site.filters.some((f) => f.id === `${key}:${slug}`); n++) {
+        slug = `${slugify(name || "filter")}-${n}`;
+      }
       site.filters.push({
-        id: `${key}:${site.filters.length}`,
+        id: `${key}:${slug}`,
         name: name || `Filter ${site.filters.length + 1}`,
         selectors: []
       });

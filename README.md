@@ -9,12 +9,13 @@ Hide distracting clutter on the sites you choose.
 Refocus is a browser extension that hides unwanted sections on popular sites:
 
 - X (Twitter) — For You tab, What's Happening, Today's News
-- YouTube — Shorts button, suggestions, home page feed
-- YouTube Music — home page suggestions
-- Spotify — home page suggestions and Browse All button
-- Reddit — home page and sidebar navigation
-- Facebook — home page feed
-- WhatsApp — status button and channel suggestions
+- YouTube — Shorts button, suggestions, home feed
+- YouTube Music — home suggestions, artwork/images, video playback
+- Spotify — home suggestions and Browse All button
+- Reddit — navigation, For You tab, recommendation cards
+- Facebook — home feed
+- WhatsApp — Status button, channel suggestions
+- TikTok — For You / Explore / Friends sections
 
 ## How to install
 
