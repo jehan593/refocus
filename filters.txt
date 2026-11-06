@@ -9,6 +9,8 @@ x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.c
 x.com##.r-bnwqim.r-u9wvl5.r-w7s2jr.r-uaa2di.r-eqz5dr.r-1habvwh.css-g5y9jx
 ! Hide "Who to Follow" card
 x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(6)
+! Open on Following
+x.com##@behavior:open-following
 
 ! --- YouTube ---
 ! Hide Shorts sidebar button

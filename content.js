@@ -299,6 +299,32 @@ ytmusic-fullbleed-thumbnail-renderer img,
   content: url("${chrome.runtime.getURL("icons/icon128.png")}") !important;
 }`;
 
+// Force X's home timeline to the Following tab whenever the For You tab is
+// active (same approach as Control Panel for Twitter). Tabs outside For You
+// (News / Tech / etc.) are user choices and are left alone.
+const FOLLOWING_POLL_INTERVAL = 500;
+let followingTimer = 0;
+
+function tabLabel(el) {
+  return (el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function checkOpenFollowing() {
+  if (location.pathname !== "/home") return;
+  const selected = document.querySelector('[role="tab"][aria-selected="true"]');
+  if (!selected) return;
+  const label = tabLabel(selected);
+  if (label !== "for you" && label !== "foryou" && label !== "for you tab") {
+    return;
+  }
+  const tablist = selected.closest('[role="tablist"]');
+  if (!tablist) return;
+  const target = [...tablist.querySelectorAll('[role="tab"]')].find((el) =>
+    tabLabel(el).startsWith("following")
+  );
+  if (target) target.click();
+}
+
 function postHideVideosState(enabled) {
   window.postMessage({ source: "refocus", type: "hide-videos", enabled }, "*");
 }
@@ -338,6 +364,22 @@ const BEHAVIORS = {
     },
     revert() {
       setBehaviorStyle("hide-images", null);
+    }
+  },
+  "open-following": {
+    apply() {
+      if (followingTimer) return;
+      checkOpenFollowing();
+      followingTimer = window.setInterval(
+        checkOpenFollowing,
+        FOLLOWING_POLL_INTERVAL
+      );
+    },
+    revert() {
+      if (followingTimer) {
+        window.clearInterval(followingTimer);
+        followingTimer = 0;
+      }
     }
   }
 };

@@ -8,7 +8,7 @@ Hide distracting clutter on the sites you choose.
 
 Refocus is a browser extension that hides unwanted sections on popular sites:
 
-- X (Twitter) — For You tab, What's Happening, Today's News
+- X (Twitter) — For You tab, What's Happening, Today's News, opens home on Following
 - YouTube — Shorts button, suggestions, home feed
 - YouTube Music — home suggestions, artwork/images, video playback
 - Spotify — home suggestions and Browse All button
