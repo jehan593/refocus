@@ -92,9 +92,19 @@ list.addEventListener("click", (e) => {
   const btn = e.target.closest("button[data-expand]");
   if (!btn) return;
   const row = btn.closest(".site-row");
-  const expanded = row.classList.toggle("open");
+  const wasOpen = row.classList.contains("open");
+  // Only one site expands at a time: collapse every open row first.
+  for (const other of list.querySelectorAll(".site-row.open")) {
+    other.classList.remove("open");
+    const otherBtn = other.querySelector("button[data-expand]");
+    if (otherBtn) otherBtn.setAttribute("aria-expanded", "false");
+  }
+  const expanded = !wasOpen;
+  if (expanded) {
+    row.classList.add("open");
+    row.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }
   btn.setAttribute("aria-expanded", String(expanded));
-  if (expanded) row.scrollIntoView({ block: "nearest", behavior: "smooth" });
 });
 
 list.addEventListener("change", async (e) => {
