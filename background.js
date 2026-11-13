@@ -10,8 +10,13 @@ const DISPLAY_NAMES = {
   "tiktok.com": "TikTok"
 };
 
+const HOST_ALIASES = {
+  "web.facebook.com": "facebook.com"
+};
+
 function canonical(host) {
   const h = host.toLowerCase();
+  if (HOST_ALIASES[h]) return HOST_ALIASES[h];
   return h.startsWith("www.") ? h.slice(4) : h;
 }
 

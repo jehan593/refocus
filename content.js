@@ -1,5 +1,12 @@
+// web.facebook.com is Facebook's alias for the same site (some regions/sessions
+// serve it instead of www.facebook.com) — treat it as one site.
+const HOST_ALIASES = {
+  "web.facebook.com": "facebook.com"
+};
+
 function canonical(host) {
   const h = host.toLowerCase();
+  if (HOST_ALIASES[h]) return HOST_ALIASES[h];
   return h.startsWith("www.") ? h.slice(4) : h;
 }
 

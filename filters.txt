@@ -57,7 +57,7 @@ www.reddit.com##.text-center.py-md.px-md.bg-neutral-background.items-center.flex
 
 ! --- Facebook ---
 ! Hide home feed
-www.facebook.com##.x6o7n8i.x1unhpq9.x1hc1fzr > div > div
+web.facebook.com##.x6o7n8i.x1unhpq9.x1hc1fzr > div > div
 
 ! --- WhatsApp ---
 ! Hide "Status" button
