@@ -306,30 +306,49 @@ ytmusic-fullbleed-thumbnail-renderer img,
   content: url("${chrome.runtime.getURL("icons/icon128.png")}") !important;
 }`;
 
-// Force X's home timeline to the Following tab whenever the For You tab is
+// Force the home timeline to the Following tab whenever the For You tab is
 // active (same approach as Control Panel for Twitter). Tabs outside For You
 // (News / Tech / etc.) are user choices and are left alone.
 const FOLLOWING_POLL_INTERVAL = 500;
+const FOLLOWING_HOME_PATHS = {
+  "x.com": ["/home"],
+  "reddit.com": ["/"]
+};
 let followingTimer = 0;
 
 function tabLabel(el) {
   return (el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function checkOpenFollowing() {
-  if (location.pathname !== "/home") return;
+function findFeedTabs() {
+  if (HOST === "reddit.com") {
+    const tabs = [...document.querySelectorAll('[role="tab"][data-feed-token]')];
+    return {
+      selected: tabs.find((el) => el.classList.contains("tab-selected")),
+      following: tabs.find((el) => el.dataset.feedToken === "following")
+    };
+  }
   const selected = document.querySelector('[role="tab"][aria-selected="true"]');
-  if (!selected) return;
-  const label = tabLabel(selected);
+  const tablist = selected && selected.closest('[role="tablist"]');
+  if (!tablist) return null;
+  return {
+    selected,
+    following: [...tablist.querySelectorAll('[role="tab"]')].find((el) =>
+      tabLabel(el).startsWith("following")
+    )
+  };
+}
+
+function checkOpenFollowing() {
+  const homePaths = FOLLOWING_HOME_PATHS[HOST] || [];
+  if (!homePaths.includes(location.pathname)) return;
+  const tabs = findFeedTabs();
+  if (!tabs || !tabs.selected || !tabs.following) return;
+  const label = tabLabel(tabs.selected);
   if (label !== "for you" && label !== "foryou" && label !== "for you tab") {
     return;
   }
-  const tablist = selected.closest('[role="tablist"]');
-  if (!tablist) return;
-  const target = [...tablist.querySelectorAll('[role="tab"]')].find((el) =>
-    tabLabel(el).startsWith("following")
-  );
-  if (target) target.click();
+  tabs.following.click();
 }
 
 function postHideVideosState(enabled) {

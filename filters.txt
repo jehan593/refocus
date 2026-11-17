@@ -54,6 +54,8 @@ www.reddit.com##.nd\:visible > faceplate-expandable-section-helper > .rounded-no
 www.reddit.com##.my-2xs.py-2xs.px-md.flex-col.flex.nd\:visible
 ! Hide "Go to For You" card
 www.reddit.com##.text-center.py-md.px-md.bg-neutral-background.items-center.flex-col.flex
+! Open on Following
+www.reddit.com##@behavior:open-following
 
 ! --- Facebook ---
 ! Hide home feed
