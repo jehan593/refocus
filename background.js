@@ -78,9 +78,33 @@ async function fetchFilters() {
   return res.text();
 }
 
+// "Hide For You" and "Open Following" used to be separate toggles. Carry the
+// old hide setting over to the combined toggle so existing choices persist.
+const COMBINED_TOGGLES = {
+  "x:hide-for-you-and-open-following": "x:hide-for-you",
+  "reddit:hide-for-you-and-open-following": "reddit:hide-for-you",
+  "tiktok:hide-for-you-and-open-following": "tiktok:hide-for-you"
+};
+const RETIRED_TOGGLES = [
+  ...Object.values(COMBINED_TOGGLES),
+  "x:open-on-following",
+  "reddit:open-on-following",
+  "tiktok:open-my-profile"
+];
+
+function migrateToggles(toggles) {
+  for (const [id, oldId] of Object.entries(COMBINED_TOGGLES)) {
+    if (toggles[id] === undefined && typeof toggles[oldId] === "boolean") {
+      toggles[id] = toggles[oldId];
+    }
+  }
+  for (const id of RETIRED_TOGGLES) delete toggles[id];
+}
+
 async function applySites(sites) {
   const stored = await chrome.storage.local.get(["sites", "toggles"]);
   const toggles = { ...(stored.toggles || {}) };
+  migrateToggles(toggles);
   for (const site of sites) {
     if (toggles[site.key] === undefined) toggles[site.key] = true;
     for (const f of site.filters) {

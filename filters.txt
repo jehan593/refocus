@@ -1,6 +1,7 @@
 ! --- X (Twitter) ---
-! Hide "For You"
+! Hide "For You" and open Following
 x.com##div.r-16y2uox.r-cpa5s6.r-14tvyh0.css-g5y9jx:nth-of-type(1)
+x.com##@behavior:open-following
 ! Hide Today's News card
 x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(4)
 ! Hide "What's Happening"
@@ -9,8 +10,6 @@ x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.c
 x.com##.r-bnwqim.r-u9wvl5.r-w7s2jr.r-uaa2di.r-eqz5dr.r-1habvwh.css-g5y9jx
 ! Hide "Who to Follow" card
 x.com##div.r-1udh08x.r-1ifxtd0.r-rs99b7.r-1phboty.r-1867qdf.r-1kqtdi0.r-kemksi.css-g5y9jx:nth-of-type(6)
-! Open on Following
-x.com##@behavior:open-following
 
 ! --- YouTube ---
 ! Hide Shorts sidebar button
@@ -46,16 +45,15 @@ open.spotify.com##.XqHQfCQKeUvdGCulQZwO
 ! --- Reddit ---
 ! Hide navigation
 www.reddit.com##left-nav-top-section
-! Hide "For You"
+! Hide "For You" and open Following
 www.reddit.com###feed-tab-1
+www.reddit.com##@behavior:open-following
 ! Hide games card
 www.reddit.com##.nd\:visible > faceplate-expandable-section-helper > .rounded-none.border-none.bg-transparent.m-0.p-0
 ! Hide recommended communities
 www.reddit.com##.my-2xs.py-2xs.px-md.flex-col.flex.nd\:visible
 ! Hide "Go to For You" card
 www.reddit.com##.text-center.py-md.px-md.bg-neutral-background.items-center.flex-col.flex
-! Open on Following
-www.reddit.com##@behavior:open-following
 
 ! --- Facebook ---
 ! Hide home feed
@@ -71,12 +69,11 @@ web.whatsapp.com##.x2vl965.xe2zdcy.x1a8lsjc.x1h678fw > .xvtqlqk.xdx6fka.x1vqgdyp
 web.whatsapp.com##div.x18qnofl.x14atkfc:nth-of-type(2)
 
 ! --- TikTok ---
-! Hide "For You"
+! Hide "For You" and open Following
 tiktok.com##[data-e2e="nav-foryou"]
 tiktok.com##a[href="/foryou"]
 tiktok.com##[class*="DivSideNavContainer"] a[href="/"]:not([data-e2e="tiktok-logo"]):not([class*="LinkLogo"])
-! Open my profile
-tiktok.com##@behavior:redirect-profile
+tiktok.com##@behavior:open-following
 ! Hide "Explore"
 tiktok.com##[data-e2e="nav-explore"]
 tiktok.com##a[href="/explore"]

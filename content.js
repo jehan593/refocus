@@ -132,8 +132,6 @@ function setBehaviorStyle(key, css) {
 }
 
 const REDIRECT_GUARD_KEY = "refocus_redirect_guard_v1";
-const HOME_FEED_CLASS = "refocus-home-feed";
-const TT_HOME_PATHS = ["/", "/foryou"];
 
 // Limit actual navigations to 3 per 30s. The window is anchored to its start
 // (ts is only written when a redirect is allowed), so blocked attempts never
@@ -153,88 +151,18 @@ function canRedirect() {
   }
 }
 
-function clearRedirectGuard() {
-  try {
-    sessionStorage.removeItem(REDIRECT_GUARD_KEY);
-  } catch {}
-}
-
-function getProfileHref() {
-  const link = document.querySelector('[data-e2e="nav-profile"]');
-  const href = link ? link.getAttribute("href") : null;
-  return href && href.startsWith("/@") && href.length > 2 ? href : null;
-}
-
-const PROFILE_POLL_INTERVAL = 500;
-const PROFILE_POLL_TIMEOUT = 30000;
-let profilePollTimer = 0;
-let profilePollDeadline = 0;
-
-function stopProfilePoll() {
-  if (profilePollTimer) {
-    window.clearInterval(profilePollTimer);
-    profilePollTimer = 0;
-  }
-}
-
-function tryProfileRedirect() {
-  // Keep polling across SPA hops between "/" and "/foryou"; only give up when
-  // the user actually leaves the home paths.
-  if (!TT_HOME_PATHS.includes(window.location.pathname)) {
-    stopProfilePoll();
-    return;
-  }
-  if (Date.now() > profilePollDeadline) {
-    stopProfilePoll();
-    return;
-  }
-  const href = getProfileHref();
-  if (!href) return;
-  stopProfilePoll();
-  if (canRedirect()) window.location.replace(href);
-}
-
-function redirectToProfile() {
-  if (profilePollTimer) return;
-  profilePollDeadline = Date.now() + PROFILE_POLL_TIMEOUT;
-  tryProfileRedirect();
-  profilePollTimer = window.setInterval(
-    tryProfileRedirect,
-    PROFILE_POLL_INTERVAL
-  );
-}
-
 let routeTimer = 0;
 
 function checkTikTokRedirect() {
   const path = window.location.pathname;
-  const isHome = TT_HOME_PATHS.includes(path);
   const isExplore = path === "/explore" || path.startsWith("/explore/");
-  document.documentElement.classList.toggle(
-    HOME_FEED_CLASS,
-    isHome && behaviorState.has("redirect-profile")
-  );
-  if (!isHome && !isExplore) {
-    stopProfilePoll();
-    clearRedirectGuard();
-    return;
-  }
-  if (isHome) {
-    if (!behaviorState.has("redirect-profile")) return;
-    redirectToProfile();
-    return;
-  }
-  if (behaviorState.has("redirect-explore")) {
-    stopProfilePoll();
-    if (canRedirect()) window.location.replace("/following");
+  if (isExplore && behaviorState.has("redirect-explore") && canRedirect()) {
+    window.location.replace("/following");
   }
 }
 
 function syncTikTokRedirectWatch() {
-  const wanted =
-    HOST === "tiktok.com" &&
-    (behaviorState.has("redirect-profile") ||
-      behaviorState.has("redirect-explore"));
+  const wanted = HOST === "tiktok.com" && behaviorState.has("redirect-explore");
   if (wanted) {
     if (!routeTimer) {
       routeTimer = window.setInterval(checkTikTokRedirect, 500);
@@ -249,15 +177,8 @@ function syncTikTokRedirectWatch() {
       window.removeEventListener("popstate", checkTikTokRedirect);
       window.removeEventListener("hashchange", checkTikTokRedirect);
     }
-    stopProfilePoll();
-    document.documentElement.classList.remove(HOME_FEED_CLASS);
   }
 }
-
-const HOME_FEED_CSS = `.${HOME_FEED_CLASS} [data-e2e="feed-video"],
-.${HOME_FEED_CLASS} [data-e2e="feed-container"],
-.${HOME_FEED_CLASS} [data-e2e="recommend-list-item-container"],
-.${HOME_FEED_CLASS} [id^="main-content-homepage_hot"] { display: none !important; }`;
 
 const YT_MUSIC_VIDEO_CSS = `ytmusic-player video { opacity: 0 !important; }
 video-cover { display: none !important; }
@@ -306,13 +227,14 @@ ytmusic-fullbleed-thumbnail-renderer img,
   content: url("${chrome.runtime.getURL("icons/icon128.png")}") !important;
 }`;
 
-// Force the home timeline to the Following tab whenever the For You tab is
-// active (same approach as Control Panel for Twitter). Tabs outside For You
-// (News / Tech / etc.) are user choices and are left alone.
+// Force the home feed to Following whenever For You is active. X and Reddit
+// switch tabs in place; TikTok uses its separate /following route. Tabs
+// outside For You (News / Tech / etc.) are user choices and are left alone.
 const FOLLOWING_POLL_INTERVAL = 500;
 const FOLLOWING_HOME_PATHS = {
   "x.com": ["/home"],
-  "reddit.com": ["/"]
+  "reddit.com": ["/"],
+  "tiktok.com": ["/", "/foryou"]
 };
 let followingTimer = 0;
 
@@ -342,6 +264,11 @@ function findFeedTabs() {
 function checkOpenFollowing() {
   const homePaths = FOLLOWING_HOME_PATHS[HOST] || [];
   if (!homePaths.includes(location.pathname)) return;
+  if (HOST === "tiktok.com") {
+    // TikTok uses a separate Following feed route instead of a home tab.
+    if (canRedirect()) window.location.replace("/following");
+    return;
+  }
   const tabs = findFeedTabs();
   if (!tabs || !tabs.selected || !tabs.following) return;
   const label = tabLabel(tabs.selected);
@@ -356,16 +283,6 @@ function postHideVideosState(enabled) {
 }
 
 const BEHAVIORS = {
-  "redirect-profile": {
-    apply() {
-      setBehaviorStyle("redirect-profile", HOME_FEED_CSS);
-      syncTikTokRedirectWatch();
-    },
-    revert() {
-      setBehaviorStyle("redirect-profile", null);
-      syncTikTokRedirectWatch();
-    }
-  },
   "redirect-explore": {
     apply() {
       syncTikTokRedirectWatch();
